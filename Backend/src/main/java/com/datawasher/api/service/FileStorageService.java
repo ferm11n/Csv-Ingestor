@@ -62,4 +62,8 @@ public class FileStorageService {
             throw new RuntimeException("Falló al guardar el archivo " + originalFileName, ex);
         }
     }
+
+    public Path loadFileAsPath(String fileId) {
+        return this.fileStorageLocation.resolve(fileId).normalize();
+    }
 }
