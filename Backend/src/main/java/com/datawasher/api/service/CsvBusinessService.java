@@ -30,10 +30,15 @@ public class CsvBusinessService {
 
         //Configurar el lector (Univocity Parsers)
         CsvParserSettings settings = new CsvParserSettings();
-        settings.setLineSeparatorDetectionEnabled(true); // Detectar si usa saltos de línea de Windows o Linux
-        settings.setHeaderExtractionEnabled(true);       // Asumir que la primera fila son títulos
-        settings.setMaxCharsPerColumn(20000);            // Seguridad: evitar que una columna gigante bloquee la memoria
+        
+        // Detectar si usa saltos de línea de Windows o Linux
+        settings.setLineSeparatorDetectionEnabled(true); 
 
+        // Asumir que la primera fila son títulos
+        settings.setHeaderExtractionEnabled(true);
+
+        // Seguridad: evitar que una columna gigante bloquee la memoria       
+        settings.setMaxCharsPerColumn(20000);            
         CsvParser parser = new CsvParser(settings);
 
         //Abrir el archivo y leer (Usamos UTF-8 para acentos y ñ)
