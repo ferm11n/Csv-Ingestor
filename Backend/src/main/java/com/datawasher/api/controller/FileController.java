@@ -1,32 +1,36 @@
 package com.datawasher.api.controller;
 
+import com.datawasher.api.dto.CleanRequest;
 import com.datawasher.api.dto.UploadResponse;
+import com.datawasher.api.service.CleaningService;
 import com.datawasher.api.service.CsvBusinessService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-// Convertis la clase en una API que responde JSON, no HTML
 @RestController
-// Todas las rutas empezarán con esto
 @RequestMapping("/api/files")
 public class FileController {
 
     private final CsvBusinessService csvBusinessService;
+    private final CleaningService cleaningService;
 
-    // CAMBIO CLAVE: Ahora inyectamos CsvBusinessService, no FileStorageService
-    public FileController(CsvBusinessService csvBusinessService) {
+    //Inyectamos servicios
+    public FileController(CsvBusinessService csvBusinessService, CleaningService cleaningService) {
         this.csvBusinessService = csvBusinessService;
+        this.cleaningService = cleaningService;
     }
 
-    // Aca solo aceptamos peticiones POST, estamos enviando archivos/datos
     @PostMapping("/upload")
     public ResponseEntity<UploadResponse> uploadFile(@RequestParam("file") MultipartFile file) {
-        
-        // Llamamos a la lógica nueva
         UploadResponse response = csvBusinessService.uploadAndPreview(file);
-        
-        // Devolvemos un JSON (status 200 OK)
+        return ResponseEntity.ok(response);
+    }
+
+    // NUEVO ENDPOINT PARA LIMPIAR
+    @PostMapping("/clean")
+    public ResponseEntity<UploadResponse> cleanColumn(@RequestBody CleanRequest request) {
+        UploadResponse response = cleaningService.cleanFile(request);
         return ResponseEntity.ok(response);
     }
 }

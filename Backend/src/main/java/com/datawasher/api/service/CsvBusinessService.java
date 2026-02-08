@@ -69,4 +69,35 @@ public class CsvBusinessService {
             previewRows
         );
     }
+
+    //Nuevo: Para previsualizar un archivo que YA existe en disco
+    public UploadResponse previewExistingFile(String fileId, String fileName) {
+        File fileOnDisk = fileStorageService.loadFileAsPath(fileId).toFile();
+        
+        CsvParserSettings settings = new CsvParserSettings();
+        settings.setLineSeparatorDetectionEnabled(true);
+        settings.setHeaderExtractionEnabled(true);
+        settings.setMaxCharsPerColumn(20000);
+
+        CsvParser parser = new CsvParser(settings);
+        parser.beginParsing(fileOnDisk, StandardCharsets.UTF_8);
+
+        String[] headers = parser.getRecordMetadata().headers();
+        if (headers == null) {
+            parser.parseNext(); 
+            headers = parser.getContext().headers();
+        }
+
+        List<String[]> previewRows = new ArrayList<>();
+        String[] row;
+        int rowCount = 0;
+
+        while ((row = parser.parseNext()) != null && rowCount < 10) {
+            previewRows.add(row);
+            rowCount++;
+        }
+        parser.stopParsing();
+
+        return new UploadResponse(fileId, fileName, headers, previewRows);
+    }
 }
