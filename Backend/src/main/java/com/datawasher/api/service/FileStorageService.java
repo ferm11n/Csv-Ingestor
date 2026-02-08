@@ -13,19 +13,18 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.UUID;
 
-@Service // [1] Le indicas a Spring que guarde esta clase en memoria
+@Service //Le indicas a Spring que guarde esta clase en memoria
 public class FileStorageService {
 
     // La ruta final donde guardaremos cosas
     private final Path fileStorageLocation;
 
-    // [2] Inyección del valor desde application.properties
+    //Inyección del valor desde application.properties
     public FileStorageService(@Value("${file.upload-dir}") String uploadDir) {
         try {
-            // Convierte el texto "uploads" en una Ruta absoluta del sistema operativo
+            //Convertir el texto "uploads" en una Ruta absoluta del sistema operativo
             this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
 
-            // Crea la carpeta si no existe
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception ex) {
             throw new RuntimeException("No se pudo crear el directorio para subir archivos.", ex);
@@ -33,7 +32,7 @@ public class FileStorageService {
     }
 
     public String storeFile(MultipartFile file) {
-        // [3] Limpia el nombre del archivo (seguridad)
+        //Limpiar el nombre del archivo (seguridad)
         String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
         try {
@@ -42,8 +41,7 @@ public class FileStorageService {
                 throw new RuntimeException("El archivo contiene una ruta inválida: " + originalFileName);
             }
 
-            // [4] Generar nombre único para evitar colisiones
-            // Ejemplo: Si subes "data.csv", lo guardamos como "550e8400-e29b...data.csv"
+            //Generar nombre único para evitar colisiones
             String fileExtension = "";
             int i = originalFileName.lastIndexOf('.');
             if (i > 0) {
@@ -51,7 +49,7 @@ public class FileStorageService {
             }
             String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
 
-            // [5] Copiar el archivo al destino
+            //Copiar el archivo al destino (muy importante)
             Path targetLocation = this.fileStorageLocation.resolve(uniqueFileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
