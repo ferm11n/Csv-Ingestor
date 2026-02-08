@@ -43,13 +43,10 @@ public class FileController {
     @GetMapping("/download/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
         
-        // 1. Cargar el archivo como recurso
         Resource resource = fileStorageService.loadFileAsResource(fileName);
 
-        // 2. Intentar determinar el tipo de archivo (opcional, por defecto application/octet-stream)
         String contentType = "application/octet-stream";
 
-        // 3. Devolver la respuesta con la cabecera de descarga
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
