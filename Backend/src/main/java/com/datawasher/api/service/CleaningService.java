@@ -51,6 +51,9 @@ public class CleaningService {
         parserSettings.setHeaderExtractionEnabled(true);
         parserSettings.setMaxCharsPerColumn(20000);
 
+        //ELiminar nulls
+        parserSettings.setSkipEmptyLines(true);
+
         CsvWriterSettings writerSettings = new CsvWriterSettings();
 
         CsvParser parser = new CsvParser(parserSettings);
@@ -68,16 +71,35 @@ public class CleaningService {
 
         String[] row;
         while ((row = parser.parseNext()) != null) {
+            // si la fila tiene menos columnas que los headers, expandir para evitar NPE al escribir
+            if (row.length < headers.length) {
+                String[] expanded = new String[headers.length];
+                System.arraycopy(row, 0, expanded, 0, row.length);
+                row = expanded;
+            }
+
+            // aplicar regla solo si el índice existe
             if (request.columnIndex() < row.length) {
                 String originalValue = row[request.columnIndex()];
                 row[request.columnIndex()] = rule.apply(originalValue);
             }
+
+            // saltar filas donde todas las columnas sean null/empty/whitespace
+            boolean allBlank = true;
+            for (String cell : row) {
+                if (cell != null && !cell.trim().isEmpty()) {
+                    allBlank = false;
+                    break;
+                }
+            }
+            if (allBlank) continue;
+
             writer.writeRow(row);
         }
 
         parser.stopParsing();
         writer.close();
 
-        return csvBusinessService.previewExistingFile(newFileId, "clean_" + inputFile.getName());
+        return csvBusinessService.previewExistingFile(newFileId, newFileId);
     }
 }
