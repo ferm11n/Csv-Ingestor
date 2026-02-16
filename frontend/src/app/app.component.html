@@ -1,18 +1,23 @@
 <mat-toolbar color="primary">
   <span>🧼 Data Washer</span>
   <span class="spacer"></span>
-  <button mat-icon-button>
-    <mat-icon>help</mat-icon>
-  </button>
 </mat-toolbar>
 
-<div class="main-container">
+<div class="main-container" style="padding: 40px; text-align: center;">
   <h1>Bienvenido al Lavadero de Datos</h1>
   <p>Sube tu CSV sucio y déjalo impecable.</p>
 
-  <button mat-raised-button color="accent">
+  <input type="file" hidden #fileInput (change)="onFileSelected($event)" accept=".csv">
+
+  <button mat-raised-button color="accent" (click)="fileInput.click()">
     <mat-icon>upload_file</mat-icon> Subir Archivo
   </button>
+
+  @if (message) {
+    <p style="margin-top: 20px; font-weight: bold; color: #3f51b5;">
+      {{ message }}
+    </p>
+  }
 </div>
 
 <router-outlet></router-outlet>
