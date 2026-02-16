@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,10 +14,10 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AppComponent {
   title = 'Data Washer';
-  message = ''; 
+  message = '';
 
-  // Inyectamos el HttpClient
-  constructor(private http: HttpClient) {}
+  //Aun que esten private, igual se crean automaticamente
+  constructor(private http: HttpClient, private cd: ChangeDetectorRef) {}
 
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
@@ -25,6 +25,8 @@ export class AppComponent {
     if (file) {
       this.message = `Subiendo: ${file.name}... ⏳`;
       this.uploadFile(file);
+      
+      event.target.value = ''; 
     }
   }
 
@@ -32,15 +34,18 @@ export class AppComponent {
     const formData = new FormData();
     formData.append('file', file);
 
-    // 🚀 Enviamos el archivo al Backend (Puerto 8080)
     this.http.post<any>('http://localhost:8080/api/files/upload', formData).subscribe({
       next: (response) => {
-        console.log('Éxito:', response);
-        this.message = `✅ ¡Archivo subido! ID: ${response.fileId}`;
+        console.log('Datos recibidos:', response); 
+        
+        this.message = `✅ ¡Archivo subido con éxito! ID: ${response.fileId}`;
+                
+        this.cd.detectChanges();
       },
       error: (error) => {
         console.error('Error:', error);
-        this.message = '❌ Error al subir el archivo. Revisa la consola.';
+        this.message = '❌ Error al subir el archivo.';
+        this.cd.detectChanges();
       }
     });
   }
