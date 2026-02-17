@@ -3,21 +3,45 @@
   <span class="spacer"></span>
 </mat-toolbar>
 
-<div class="main-container" style="padding: 40px; text-align: center;">
-  <h1>Bienvenido al Lavadero de Datos</h1>
-  <p>Sube tu CSV sucio y déjalo impecable.</p>
+<div class="main-container">
+  <div class="upload-section">
+    <h1>1. Carga tu CSV</h1>
+    <input type="file" hidden #fileInput (change)="onFileSelected($event)" accept=".csv">
+    
+    <button mat-raised-button color="accent" (click)="fileInput.click()">
+      <mat-icon>upload_file</mat-icon> Subir Archivo
+    </button>
+    
+    <p class="status-message">{{ message }}</p>
+  </div>
 
-  <input type="file" hidden #fileInput (change)="onFileSelected($event)" accept=".csv">
+  @if (showTable) {
+    <div class="actions-section">
+      <h2>2. Aplica Reglas de Limpieza</h2>
+      <div class="button-row">
+        <button mat-stroked-button color="warn" (click)="applyRule('remove_nulls')">
+          <mat-icon>delete_sweep</mat-icon> Eliminar Nulos
+        </button>
+        <button mat-stroked-button color="primary" (click)="applyRule('uppercase')">
+          <mat-icon>text_fields</mat-icon> Mayúsculas
+        </button>
+        <button mat-raised-button color="primary" (click)="downloadFile()">
+          <mat-icon>download</mat-icon> Descargar Limpio
+        </button>
+      </div>
+    </div>
 
-  <button mat-raised-button color="accent" (click)="fileInput.click()">
-    <mat-icon>upload_file</mat-icon> Subir Archivo
-  </button>
+    <div class="table-container mat-elevation-z8">
+      <table mat-table [dataSource]="rows">
+        
+        <ng-container *ngFor="let col of headers; let i = index" [matColumnDef]="col">
+          <th mat-header-cell *matHeaderCellDef> {{ col | titlecase }} </th>
+          <td mat-cell *matCellDef="let row"> {{ row[i] || '—' }} </td>
+        </ng-container>
 
-  @if (message) {
-    <p style="margin-top: 20px; font-weight: bold; color: #3f51b5;">
-      {{ message }}
-    </p>
+        <tr mat-header-row *matHeaderRowDef="headers; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: headers;"></tr>
+      </table>
+    </div>
   }
 </div>
-
-<router-outlet></router-outlet>
