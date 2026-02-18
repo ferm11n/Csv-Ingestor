@@ -53,23 +53,30 @@ public class FileService {
         }
 
         if (data == null) {
-            throw new RuntimeException("Archivo no encontrado en memoria ni disco.");
+            throw new RuntimeException("Archivo no encontrado. Por favor, súbelo de nuevo.");
         }
 
         List<String[]> currentRows = data.rows();
         List<String[]> cleanedRows = new ArrayList<>();
         String ruleKey = ruleType.toLowerCase();
 
-        // Lógica de reglas
         if (ruleKey.equals("remove_nulls")) {
              for (String[] row : currentRows) {
                  boolean keepRow = true;
-                 if (colIndex >= 0 && colIndex < row.length) {
-                     String cell = row[colIndex];
-                     if (cell == null || cell.trim().isEmpty()) keepRow = false;
-                 } else {
-                     keepRow = !Arrays.stream(row).allMatch(c -> c == null || c.trim().isEmpty());
+                 
+                 if (colIndex >= 0) {
+                     if (colIndex < row.length) {
+                         String cell = row[colIndex];
+                         if (cell == null || cell.trim().isEmpty()) {
+                             keepRow = false;
+                         }
+                     }
+                 } 
+                 else {
+                     boolean isRowEmpty = Arrays.stream(row).allMatch(c -> c == null || c.trim().isEmpty());
+                     if (isRowEmpty) keepRow = false;
                  }
+                 
                  if (keepRow) cleanedRows.add(row);
              }
         } 
@@ -98,10 +105,10 @@ public class FileService {
 
         FileData newData = new FileData(data.fileName(), data.headers(), cleanedRows);
         fileCache.put(cleanId, newData);
+        
         return new FileResponse(cleanId, data.fileName(), data.headers(), cleanedRows);
     }
 
-    // 👇 AQUÍ ESTÁ EL ARREGLO DEL NULL POINTER
     public FileResponse resetFile(String fileId) {
         String cleanId = fileId.replace(".csv", "");
         fileCache.remove(cleanId);

@@ -1,13 +1,11 @@
 /* =========================================
-   🎨 VARIABLES Y UTILIDADES
+   VARIABLES Y UTILIDADES
    ========================================= */
 
-.spacer { 
-  flex: 1 1 auto; 
-}
+.spacer { flex: 1 1 auto; }
 
 /* =========================================
-   📐 LAYOUT PRINCIPAL
+   LAYOUT PRINCIPAL
    ========================================= */
 
 .main-container {
@@ -24,7 +22,7 @@
 }
 
 /* =========================================
-   ☁️ SECCIÓN DE CARGA (Upload)
+   SECCIÓN DE CARGA
    ========================================= */
 
 .upload-section {
@@ -50,7 +48,7 @@
 }
 
 /* =========================================
-   🛠️ PANEL DE ACCIONES
+   PANEL DE ACCIONES
    ========================================= */
 
 .actions-section {
@@ -61,13 +59,11 @@
   border: 1px solid #eee;
 }
 
+/* CABECERA SIMPLE (Sin elementos flotantes) */
 .header-actions {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 10px;
 }
 
 .header-actions h2 {
@@ -76,72 +72,16 @@
 }
 
 /* =========================================
-   🏷️ BADGES DE ESTADO (Indicadores)
-   ========================================= */
-
-.badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: all 0.3s ease;
-}
-
-.badge.global {
-  background-color: #eeeeee;
-  color: #616161;
-  border: 1px solid #bdbdbd;
-}
-
-.badge.specific {
-  background-color: #e3f2fd;
-  color: #1565c0;
-  border: 1px solid #2196f3;
-}
-
-.badge mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-}
-
-.close-btn {
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  margin-left: 8px;
-  background: rgba(255,255,255,0.5);
-  border-radius: 50%;
-}
-
-.close-btn mat-icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
-}
-
-.animated-fade {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* =========================================
-   📦 GRID Y COLORES PROFESIONALES
+   GRID DE TARJETAS (Estable)
    ========================================= */
 
 .rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  /* Mantenemos las 5 columnas fijas para que se vea ordenado */
+  grid-template-columns: repeat(5, 1fr);
   gap: 15px;
   margin-bottom: 25px;
+  width: 100%;
 }
 
 .rule-group {
@@ -152,8 +92,9 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
   height: 100%;
+  min-width: 0;
+  transition: all 0.3s ease;
 }
 
 .rule-group:hover {
@@ -174,7 +115,10 @@
   letter-spacing: 0.5px;
 }
 
-/* CONTENEDOR DE BOTONES (Columna vertical general) */
+/* =========================================
+   BOTONES
+   ========================================= */
+
 .buttons-wrap {
   display: flex;
   flex-direction: column; 
@@ -182,34 +126,29 @@
   flex-grow: 1;
 }
 
-/* --- CLASE ESPECIAL: Fila de dos botones (Trim | Normalizar) --- */
+/* Fila de dos botones */
 .row-2 {
   display: flex;
-  gap: 10px !important; /* Espacio forzado entre ellos */
+  gap: 10px; 
   width: 100%;
 }
 
-/* Corrección para que no se peguen: permite que se encojan si falta espacio */
 .row-2 .btn-rule {
-  flex: 1;        /* Ocupan el 50% exacto cada uno */
-  min-width: 0;   /* CLAVE: Evita desbordamientos */
-  padding: 0 4px; /* Relleno lateral reducido */
+  flex: 1;        
+  min-width: 0;   
+  padding: 0 4px; 
   overflow: hidden; 
 }
 
-/* --- ESTILO DE BOTÓN LIMPIO (.btn-rule) --- */
+/* Estilo Base Botón */
 .btn-rule {
   width: 100%;         
   min-height: 42px;
-  
   display: flex;
   align-items: center;
   justify-content: center; 
-  
   font-size: 0.85rem;
   font-weight: 500;
-  
-  /* Paleta Limpia */
   color: #455a64;       
   background: #ffffff;  
   border: 1px solid #cfd8dc; 
@@ -227,7 +166,6 @@
   transition: color 0.2s;
 }
 
-/* --- ESTADO HOVER (Azul Profesional) --- */
 .btn-rule:hover {
   background-color: #e3f2fd; 
   border-color: #2196f3;     
@@ -238,7 +176,6 @@
   color: #1565c0; 
 }
 
-/* --- DESTRUCTIVOS (Rojo sutil) --- */
 .btn-rule.destructive:hover {
   background-color: #ffebee; 
   border-color: #ef5350;     
@@ -250,7 +187,7 @@
 }
 
 /* =========================================
-   ⬇️ ÁREA DE DESCARGA
+   ⬇ÁREA DE DESCARGA
    ========================================= */
 
 .download-area {
@@ -261,7 +198,7 @@
 }
 
 /* =========================================
-   📊 TABLA DE DATOS
+   TABLA DE DATOS
    ========================================= */
 
 .table-container {
@@ -298,7 +235,6 @@ table {
   border-collapse: collapse;
 }
 
-/* --- ESTILOS DE CABECERA (TH) --- */
 .clickable-header {
   cursor: pointer;
   user-select: none; 
@@ -317,8 +253,6 @@ table {
   justify-content: space-between;
 }
 
-/* --- ESTADOS SELECCIONADOS --- */
-
 .selected-col-header {
   background-color: #bbdefb !important;
   color: #0d47a1;
@@ -331,4 +265,11 @@ table {
   color: #333;
   border-left: 1px solid #e3f2fd;
   border-right: 1px solid #e3f2fd;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .rules-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }

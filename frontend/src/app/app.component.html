@@ -24,26 +24,6 @@
       
       <div class="header-actions">
         <h2>🛠️ 2. Panel de Control</h2>
-        
-        <div class="mode-indicator">
-          
-          @if (selectedColumnIndex === -1) {
-            <div class="badge global animated-fade">
-               <mat-icon>public</mat-icon>
-               <span>MODO GLOBAL: <strong>Aplica a todo el archivo</strong></span>
-            </div>
-          } @else {
-            <div class="badge specific animated-fade">
-               <mat-icon>gps_fixed</mat-icon>
-               <span>COLUMNA: <strong>{{ headers[selectedColumnIndex] }}</strong></span>
-               
-               <button mat-icon-button class="close-btn" (click)="selectColumn(-1)" matTooltip="Volver a modo global">
-                  <mat-icon>close</mat-icon>
-               </button>
-            </div>
-          }
-
-        </div>
       </div>
 
       <div class="rules-grid">
@@ -139,7 +119,11 @@
     <div class="table-container mat-elevation-z8">
       <div class="table-header-hint">
         <mat-icon>lightbulb</mat-icon>
-        <span>Tip: Haz clic en el encabezado de una columna para seleccionarla.</span>
+        @if(selectedColumnIndex === -1) {
+            <span><strong>MODO GLOBAL:</strong> Las reglas aplican a todo el archivo. Haz clic en una columna para seleccionarla.</span>
+        } @else {
+            <span><strong>MODO COLUMNA:</strong> Editando <u>{{ headers[selectedColumnIndex] }}</u>. (Haz clic de nuevo para deseleccionar).</span>
+        }
       </div>
       
       <table mat-table [dataSource]="rows">
