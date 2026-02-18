@@ -28,6 +28,8 @@ export class AppComponent {
   rows: any[] = [];
   showTable = false;
 
+  currentFileId: string = "";
+
   //Aun que esten private, igual se crean automaticamente
   constructor(private http: HttpClient, private cd: ChangeDetectorRef) {}
 
@@ -48,11 +50,11 @@ export class AppComponent {
 
     this.http.post<any>('http://localhost:8080/api/files/upload', formData).subscribe({
       next: (response) => {
-        //console.log('Datos recibidos:', response); 
+        //console.log('Datos recibidos:', response);
+        this.currentFileId = response.fileId; 
         this.headers = response.headers;
         this.rows = response.rows;
         this.showTable = true;
-
         this.message = `✅ ¡Archivo subido con éxito! ID: ${response.fileId}`;
         this.cd.detectChanges();
       },
@@ -65,9 +67,29 @@ export class AppComponent {
     });
   }
 
-  //los placeholder
+
   applyRule(ruleType: string) {
-    alert("Aca va la regla: ${ruleType}");
+    if (!this.currentFileId) return;
+
+    this.message = '⏳ Aplicando reglas de limpieza...';
+    
+    //POST /api/files/{id}/clean?rule=...
+    const url = `http://localhost:8080/api/files/${this.currentFileId}/clean?rule=${ruleType}`;
+
+    this.http.post<any>(url, {}).subscribe({
+      next: (response) => {
+        //Actualizamos la tabla con los datos limpios que devolvió el backend
+        this.rows = response.rows;
+        
+        this.message = `✨ ¡Limpieza completada! Ahora quedan ${response.rows.length} filas.`;
+        this.cd.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al limpiar:', error);
+        this.message = '❌ Error al aplicar la regla.';
+        this.cd.detectChanges();
+      }
+    });
   }
 
   downloadFile() {
