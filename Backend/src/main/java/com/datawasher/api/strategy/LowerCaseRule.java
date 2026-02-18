@@ -3,16 +3,14 @@ package com.datawasher.api.strategy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TrimRule implements CleaningRule {
+public class LowerCaseRule implements CleaningRule {
     @Override
     public String getType() {
-        return "trim";
+        return "lowercase";
     }
 
     @Override
     public String apply(String value) {
-        // Siempre validamos null antes de operar
-        if (value == null) return null;
-        return value.trim();
+        return (value == null) ? null : value.toLowerCase();
     }
 }

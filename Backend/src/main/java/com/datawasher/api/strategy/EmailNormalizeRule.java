@@ -2,13 +2,19 @@ package com.datawasher.api.strategy;
 
 import org.springframework.stereotype.Component;
 
-@Component("EMAIL_NORMALIZE")
+@Component
 public class EmailNormalizeRule implements CleaningRule {
+    @Override
+    public String getType() { return "email_normalize"; }
 
     @Override
     public String apply(String value) {
         if (value == null) return null;
-        // eliminar cualquier whitespace (espacios, tabs, NBSP, newlines) y convertir a minúsculas
-        return value.trim().replaceAll("\\s+", "").toLowerCase();
+
+        String clean = value.trim().toLowerCase();
+
+        clean = clean.replace(" ", "");
+
+        return clean;
     }
 }

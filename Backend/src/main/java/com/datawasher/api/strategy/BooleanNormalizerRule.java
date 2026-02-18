@@ -2,26 +2,19 @@ package com.datawasher.api.strategy;
 
 import org.springframework.stereotype.Component;
 
-@Component("BOOLEAN_NORMALIZER")
+@Component
 public class BooleanNormalizerRule implements CleaningRule {
+    @Override
+    public String getType() { return "boolean_normalize"; }
 
     @Override
     public String apply(String value) {
-        if (value == null) return null;
-        
+        if (value == null) return "false";
         String normalized = value.trim().toLowerCase();
-        
-        // Valores que representan TRUE
-        if (normalized.matches("^(sí|si|yes|true|verdadero|1|on|activo)$")) {
-            return "TRUE";
-        }
-        
-        // Valores que representan FALSE
-        if (normalized.matches("^(no|false|falso|0|off|inactivo)$")) {
-            return "FALSE";
-        }
-        
-        // Si no coincide con ninguno, devuelve el valor original
-        return value;
+        boolean isTrue = normalized.equals("si") || 
+                         normalized.equals("yes") || 
+                         normalized.equals("1") || 
+                         normalized.equals("true");
+        return String.valueOf(isTrue);
     }
 }

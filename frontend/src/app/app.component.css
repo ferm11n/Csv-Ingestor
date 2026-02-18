@@ -1,51 +1,334 @@
-.spacer { flex: 1 1 auto; }
+/* =========================================
+   🎨 VARIABLES Y UTILIDADES
+   ========================================= */
+
+.spacer { 
+  flex: 1 1 auto; 
+}
+
+/* =========================================
+   📐 LAYOUT PRINCIPAL
+   ========================================= */
 
 .main-container {
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1200px; 
+  margin: 0 auto;    
+  font-family: 'Roboto', sans-serif;
+}
+
+.toolbar-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =========================================
+   ☁️ SECCIÓN DE CARGA (Upload)
+   ========================================= */
+
+.upload-section {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
   text-align: center;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+}
+
+.upload-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 15px;
 }
 
 .status-message {
-  margin-top: 15px;
-  font-weight: bold;
-  color: #2c3e50;
+  font-weight: 500;
+  color: #1565c0;
 }
 
-/* Sección de Acciones */
+/* =========================================
+   🛠️ PANEL DE ACCIONES
+   ========================================= */
+
 .actions-section {
-  margin: 30px 0;
-  padding: 20px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+  background: #fafafa;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  border: 1px solid #eee;
 }
 
-.button-row {
+.header-actions {
   display: flex;
-  justify-content: center;
-  gap: 15px; 
-  margin-top: 10px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-/* Estilos de la Tabla */
+.header-actions h2 {
+  margin: 0;
+  color: #333;
+}
+
+/* =========================================
+   🏷️ BADGES DE ESTADO (Indicadores)
+   ========================================= */
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.badge.global {
+  background-color: #eeeeee;
+  color: #616161;
+  border: 1px solid #bdbdbd;
+}
+
+.badge.specific {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #2196f3;
+}
+
+.badge mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.close-btn {
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  margin-left: 8px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+}
+
+.close-btn mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.animated-fade {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   📦 GRID Y COLORES PROFESIONALES
+   ========================================= */
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.rule-group {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.rule-group:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(21, 101, 192, 0.1);
+  border-color: #bbdefb;
+}
+
+.rule-group h3 {
+  margin-top: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #546e7a;
+  border-bottom: 1px solid #eceff1;
+  padding-bottom: 12px;
+  margin-bottom: 15px;
+  letter-spacing: 0.5px;
+}
+
+/* CONTENEDOR DE BOTONES (Columna vertical general) */
+.buttons-wrap {
+  display: flex;
+  flex-direction: column; 
+  gap: 10px;
+  flex-grow: 1;
+}
+
+/* --- CLASE ESPECIAL: Fila de dos botones (Trim | Normalizar) --- */
+.row-2 {
+  display: flex;
+  gap: 10px !important; /* Espacio forzado entre ellos */
+  width: 100%;
+}
+
+/* Corrección para que no se peguen: permite que se encojan si falta espacio */
+.row-2 .btn-rule {
+  flex: 1;        /* Ocupan el 50% exacto cada uno */
+  min-width: 0;   /* CLAVE: Evita desbordamientos */
+  padding: 0 4px; /* Relleno lateral reducido */
+  overflow: hidden; 
+}
+
+/* --- ESTILO DE BOTÓN LIMPIO (.btn-rule) --- */
+.btn-rule {
+  width: 100%;         
+  min-height: 42px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  
+  font-size: 0.85rem;
+  font-weight: 500;
+  
+  /* Paleta Limpia */
+  color: #455a64;       
+  background: #ffffff;  
+  border: 1px solid #cfd8dc; 
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+  line-height: 1.2;
+}
+
+.btn-rule mat-icon {
+  margin-right: 8px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #78909c; 
+  transition: color 0.2s;
+}
+
+/* --- ESTADO HOVER (Azul Profesional) --- */
+.btn-rule:hover {
+  background-color: #e3f2fd; 
+  border-color: #2196f3;     
+  color: #1565c0;            
+}
+
+.btn-rule:hover mat-icon {
+  color: #1565c0; 
+}
+
+/* --- DESTRUCTIVOS (Rojo sutil) --- */
+.btn-rule.destructive:hover {
+  background-color: #ffebee; 
+  border-color: #ef5350;     
+  color: #c62828;            
+}
+
+.btn-rule.destructive:hover mat-icon {
+  color: #c62828;
+}
+
+/* =========================================
+   ⬇️ ÁREA DE DESCARGA
+   ========================================= */
+
+.download-area {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+}
+
+/* =========================================
+   📊 TABLA DE DATOS
+   ========================================= */
+
 .table-container {
-  max-height: 500px;
-  overflow: auto;    
-  border-radius: 4px;
+  max-height: 600px; 
+  overflow: auto;
+  background: white;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.table-header-hint {
+  position: sticky; 
+  top: 0;
+  z-index: 1000;
+  background-color: #fff8e1; 
+  color: #f57c00;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #ffe0b2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-header-hint mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 table {
   width: 100%;
+  border-collapse: collapse;
 }
 
-th.mat-header-cell {
-  background-color: #e0e0e0;
+/* --- ESTILOS DE CABECERA (TH) --- */
+.clickable-header {
+  cursor: pointer;
+  user-select: none; 
+  transition: background 0.2s;
+  border-bottom: 2px solid #e0e0e0;
+  padding-right: 20px !important;
+}
+
+.clickable-header:hover {
+  background-color: #f5f5f5; 
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* --- ESTADOS SELECCIONADOS --- */
+
+.selected-col-header {
+  background-color: #bbdefb !important;
+  color: #0d47a1;
+  border-bottom: 3px solid #1565c0; 
+}
+
+.selected-col-cell {
+  background-color: #f0f7ff; 
+  font-weight: 500;
   color: #333;
-  font-weight: bold;
-}
-
-/* Para marcar visualmente los nulos */
-td.mat-cell {
-  padding-right: 20px; 
+  border-left: 1px solid #e3f2fd;
+  border-right: 1px solid #e3f2fd;
 }
