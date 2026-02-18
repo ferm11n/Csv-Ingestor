@@ -45,6 +45,12 @@ export class AppComponent {
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file) {
+      if (!file.name.toLowerCase().endsWith(".csv")) {
+        this.message = "Error: Solo se permiten archivos con extension CSV.";
+        event.target.value = "";
+        return;
+      }
+
       this.uploadFile(file);
     }
   }
@@ -67,7 +73,7 @@ export class AppComponent {
       },
       error: (error) => {
         console.error(error);
-        this.message = '❌ Error al subir el archivo.';
+        this.message = error.error?.message || '❌ Error al subir el archivo.';
       }
     });
   }

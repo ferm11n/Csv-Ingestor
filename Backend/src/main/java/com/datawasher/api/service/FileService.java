@@ -35,6 +35,16 @@ public class FileService {
     }
 
     public FileResponse processFile(MultipartFile file) {
+        //validacion csv
+        if (file.isEmpty()) {
+            throw new RuntimeException("El archivo esta vacio");
+        }
+
+        String fileName = file.getOriginalFilename();
+        if (fileName == null || !fileName.toLowerCase().endsWith(".csv")) {
+            throw new RuntimeException("Formato no soportado. Solo se admiten archivos con extension .CSV");
+        }
+
         UploadResponse resp = csvBusinessService.uploadAndPreview(file);
         List<String> headersList = Arrays.asList(resp.headers());
         String cleanId = resp.fileId().replace(".csv", "");
