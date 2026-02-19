@@ -1,6 +1,7 @@
 package com.datawasher.api.service;
 
 import com.datawasher.api.dto.UploadResponse;
+import com.datawasher.api.model.FileData;
 import com.datawasher.api.model.FileResponse;
 import com.datawasher.api.strategy.CleaningRule;
 import com.opencsv.CSVReader;
@@ -17,13 +18,12 @@ import java.util.stream.Collectors;
 @Service
 public class FileService {
 
+    // shared cache of file data – static so all instances see same storage
     private static final Map<String, FileData> fileCache = new ConcurrentHashMap<>();
 
     private final CsvBusinessService csvBusinessService;
     private final FileStorageService fileStorageService;
     private final Map<String, CleaningRule> strategyMap;
-
-    private record FileData(String fileName, List<String> headers, List<String[]> rows) {}
 
     public FileService(CsvBusinessService csvBusinessService, 
                        FileStorageService fileStorageService,
@@ -46,11 +46,11 @@ public class FileService {
         }
 
         UploadResponse resp = csvBusinessService.uploadAndPreview(file);
-        List<String> headersList = Arrays.asList(resp.headers());
         String cleanId = resp.fileId().replace(".csv", "");
-        
-        fileCache.put(cleanId, new FileData(resp.fileName(), headersList, resp.rows()));
-        return new FileResponse(cleanId, resp.fileName(), headersList, resp.rows());
+
+        // headers are returned as array by the upload service; keep them that way in the model
+        fileCache.put(cleanId, new FileData(resp.fileName(), resp.headers(), resp.rows()));
+        return new FileResponse(cleanId, resp.fileName(), Arrays.asList(resp.headers()), resp.rows());
     }
 
     public FileResponse cleanFile(String fileId, String ruleType, int colIndex) {
@@ -116,7 +116,7 @@ public class FileService {
         FileData newData = new FileData(data.fileName(), data.headers(), cleanedRows);
         fileCache.put(cleanId, newData);
         
-        return new FileResponse(cleanId, data.fileName(), data.headers(), cleanedRows);
+        return new FileResponse(cleanId, data.fileName(), Arrays.asList(data.headers()), cleanedRows);
     }
 
     public FileResponse resetFile(String fileId) {
@@ -131,7 +131,7 @@ public class FileService {
         }
 
         fileCache.put(cleanId, originalData);
-        return new FileResponse(cleanId, originalData.fileName(), originalData.headers(), originalData.rows());
+        return new FileResponse(cleanId, originalData.fileName(), Arrays.asList(originalData.headers()), originalData.rows());
     }
 
     private FileData tryRebuildFromDisk(String fileId) {
@@ -140,7 +140,7 @@ public class FileService {
             try (CSVReader reader = new CSVReader(new InputStreamReader(Files.newInputStream(path)))) {
                 List<String[]> allRows = reader.readAll();
                 if (allRows.isEmpty()) return null;
-                return new FileData(path.getFileName().toString(), Arrays.asList(allRows.get(0)), allRows.subList(1, allRows.size()));
+                return new FileData(path.getFileName().toString(), allRows.get(0), allRows.subList(1, allRows.size()));
             }
         } catch (Exception ex) {
             return null;
