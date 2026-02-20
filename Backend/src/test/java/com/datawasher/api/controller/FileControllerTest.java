@@ -4,17 +4,17 @@ import com.datawasher.api.model.FileResponse;
 import com.datawasher.api.service.FileService;
 import com.datawasher.api.service.CleaningService;
 import com.datawasher.api.service.FileStorageService;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
+// 1. EL IMPORT NUEVO
+import org.springframework.test.context.bean.override.mockito.MockitoBean; 
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -31,18 +31,19 @@ class FileControllerTest {
     @Autowired
     private MockMvc mockMvc; 
 
-    @MockBean
+    // 2. USAMOS LA NUEVA ANOTACIÓN
+    @MockitoBean
     private FileService fileService; 
 
-    @MockBean
+    @MockitoBean
     private CleaningService cleaningService;
 
-    @MockBean
+    @MockitoBean
     private FileStorageService fileStorageService;
+
     @Test
     @DisplayName("POST /upload - Debe retornar 200 OK si el archivo es válido")
     void testUploadFileSuccess() throws Exception {
-        // GIVEN: Un archivo falso
         MockMultipartFile file = new MockMultipartFile(
                 "file", 
                 "datos.csv", 
@@ -54,14 +55,13 @@ class FileControllerTest {
         when(fileService.processFile(any())).thenReturn(mockResponse);
 
         mockMvc.perform(multipart("/api/files/upload").file(file))
-                .andExpect(status().isOk()) // Esperamos 200
-                .andExpect(jsonPath("$.fileName").value("datos.csv")); // Verificamos el JSON
+                .andExpect(status().isOk()) 
+                .andExpect(jsonPath("$.fileName").value("datos.csv")); 
     }
 
     @Test
     @DisplayName("POST /clean - Debe retornar 200 OK al limpiar")
     void testCleanFileSuccess() throws Exception {
-        // GIVEN: Simulamos que el servicio responde bien
         FileResponse mockResponse = new FileResponse("file1", "datos.csv", List.of("h1"), new ArrayList<>());
         
         when(fileService.cleanFile(anyString(), anyString(), anyInt()))
@@ -82,7 +82,6 @@ class FileControllerTest {
                 "application/pdf", 
                 "fake content".getBytes()
         );
-
         
         when(fileService.processFile(any()))
                 .thenThrow(new RuntimeException("Formato no soportado"));
