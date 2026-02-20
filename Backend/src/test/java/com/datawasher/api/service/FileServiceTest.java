@@ -2,10 +2,7 @@ package com.datawasher.api.service;
 
 import com.datawasher.api.model.FileData;
 import com.datawasher.api.model.FileResponse;
-// ⚠️ IMPORTANTE: Asegúrate de importar tu interfaz CleaningRule
-// (Si está en otro paquete, ajusta esta línea)
-import com.datawasher.api.strategy.CleaningRule; 
-
+import com.datawasher.api.strategy.CleaningRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,33 +23,27 @@ class FileServiceTest {
     @Mock
     private CsvBusinessService csvBusinessService;
 
-    private FileService fileService; 
+    private FileService fileService;
 
     private Map<String, FileData> fileCache;
 
-    @SuppressWarnings("null")
+    @SuppressWarnings({"unchecked", "null"})
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         List<CleaningRule> emptyRules = new ArrayList<>();
 
-        
+        // 1. Instantiate the service with no storage (not needed for clean tests)
         fileService = new FileService(csvBusinessService, null, emptyRules);
 
-        // the cache is a private static final field in FileService; we cannot replace it
-        // via ReflectionTestUtils because it's final. Instead grab the existing map and clear it
-        // before each test so we start with a fresh state.
-        //noinspection unchecked
-        fileCache = (Map<String, FileData>) ReflectionTestUtils.getField(FileService.class, "fileCache");
-        if (fileCache == null) {
-            fileCache = new ConcurrentHashMap<>();
-            ReflectionTestUtils.setField(FileService.class, "fileCache", fileCache);
-        } else {
-            fileCache.clear();
-        }
+        // 2. Obtain and clear the shared static cache rather than replacing it
+        java.lang.reflect.Field cacheField = FileService.class.getDeclaredField("fileCache");
+        cacheField.setAccessible(true);
+        Map<String, FileData> shared = (Map<String, FileData>) cacheField.get(null);
+        shared.clear();
+        fileCache = shared;
 
-       
+        // 3. Configure strategyMap manually (rules list was empty)
         Map<String, CleaningRule> manualStrategyMap = new HashMap<>();
-        
         manualStrategyMap.put("uppercase", new CleaningRule() {
             @Override
             public String apply(String input) {
@@ -74,6 +63,7 @@ class FileServiceTest {
     private void seedCache(String fileId, List<String[]> rows) {
         String[] headers = {"Nombre", "Email", "Edad"};
         FileData data = new FileData("test.csv", headers, rows);
+        // work against the live shared cache
         fileCache.put(fileId, data);
     }
 
@@ -87,6 +77,7 @@ class FileServiceTest {
         rows.add(new String[]{"Pedro", "", "30"});         
         rows.add(new String[]{"", "maria@test.com", "28"}); 
 
+        // IMPORTANTE: Volvemos a tu diseño original "file1"
         seedCache("file1", rows);
 
         FileResponse response = fileService.cleanFile("file1.csv", "remove_nulls", 1);
